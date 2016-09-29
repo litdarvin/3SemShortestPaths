@@ -1,64 +1,42 @@
+//Автор: Литвинцева Дарья
+//Описание: 3 семестр, задача 1
+
 #include <iostream>
 #include <vector>
 #include <limits>
-#include <math.h> 
+#include <math.h>
+#include <assert.h>
 
 using std::vector;
 using std::cout;
 using std::cin;
 
-class CVertex
-{
+class CVertex {
 public:
+	CVertex() {	distance = std::numeric_limits<double>::infinity(); }
 	//properties
-	vector<CVertex*>& Children()
-	{
-		return children;
-	}
-
-	vector<double>& ChildrenCost()
-	{
-		return childrenCost;
-	}
-
-	double& Distance()
-	{
-		return distance;
-	}
-
-	CVertex()
-	{
-		distance = std::numeric_limits<double>::infinity();
-	}
+	vector<CVertex*>& Children() { return children;	}
+	vector<double>& ChildrenCost() { return childrenCost; }
+	double& Distance() { return distance; }
 
 private:
-
 	vector<CVertex*> children;
 	vector<double> childrenCost;
 	double distance;
-
 };
 
-bool BFAlgorythm(vector<CVertex*>& Graph, int N)
-{
-	bool relaxed;
+bool isNegativeCycleBFAlgorythm( vector<CVertex*>& graph, int numberCurrency )
+{	
+	assert(!graph.empty());
+	(*graph.begin())->Distance() = 0;
 
-	(*Graph.begin())->Distance() = 0;
-
-	vector<double>::iterator itChildrenCost;
-
-	for (int k = 0; k < N - 1; ++k)
-	{
+	bool relaxed = false;
+	for( int k = 0; k < numberCurrency - 1; ++k ) {
 		relaxed = false;
-
-		for (auto it = Graph.begin(); it != Graph.end(); ++it)
-		{
-			itChildrenCost = (*it)->ChildrenCost().begin();
-
-			for (auto itChildren = (*it)->Children().begin(); itChildren != (*it)->Children().end(); ++itChildren)
-			{
-				if ((*itChildren)->Distance() >(*it)->Distance() + *itChildrenCost)
-				{
+		for( auto it = graph.begin(); it != graph.end(); ++it ) {
+			vector<double>::iterator itChildrenCost = (*it)->ChildrenCost().begin();
+			for( auto itChildren = (*it)->Children().begin(); itChildren != (*it)->Children().end(); ++itChildren ) {
+				if( (*itChildren)->Distance() > (*it)->Distance() + *itChildrenCost ) {
 					(*itChildren)->Distance() = (*it)->Distance() + *itChildrenCost;
 					relaxed = true;
 				}
@@ -70,58 +48,52 @@ bool BFAlgorythm(vector<CVertex*>& Graph, int N)
 			break;
 	}
 
-	for (auto it = Graph.begin(); it != Graph.end(); ++it)
-	{
-		itChildrenCost = (*it)->ChildrenCost().begin();
-
-		for (auto itChildren = (*it)->Children().begin(); itChildren != (*it)->Children().end(); ++itChildren)
-		{
-			if ((*itChildren)->Distance() > (*it)->Distance() + *itChildrenCost)
-				return true; //negative cycle
+	for( auto it = graph.begin(); it != graph.end(); ++it )	{
+		auto itChildrenCost = (*it)->ChildrenCost().begin();
+		for ( auto itChildren = (*it)->Children().begin(); itChildren != (*it)->Children().end(); ++itChildren ) {
+			if( (*itChildren)->Distance() > (*it)->Distance() + *itChildrenCost )
+				return true; //Negative cycle
 			++itChildrenCost;
 		}
 	}
-	//no negative cycle
+	//No negative cycle
 	return false;
 }
 
 int main()
 {
-	int N;
-	cin >> N;
-
+	int numberCurrency = 0;
+	cin >> numberCurrency;
 	vector<CVertex*> Graph;
-
-	for (int i = 0; i < N; ++i)
-		Graph.push_back(new CVertex());
-
-	int k = 0;
-	double cost;
-
-	for (auto it = Graph.begin(); it != Graph.end(); ++it)
-	{
-		for (int i = 0; i < N; ++i)
-		{
-			if (i != k)
-			{
+	//Locate memory
+	for( int i = 0; i < numberCurrency; ++i ) {
+		Graph.push_back( new CVertex() );
+	}
+	//Reading
+	int k = 0;	
+	for( auto it = Graph.begin(); it != Graph.end(); ++it ) {
+		for ( int i = 0; i < numberCurrency; ++i ) {
+			if( i != k ) {
+				double cost = 0;
 				cin >> cost;
-				if (cost != -1)
-				{
-					(*it)->Children().push_back(Graph.at(i));
-					(*it)->ChildrenCost().push_back(-log(cost));
+				if( cost != -1 ) {
+					(*it)->Children().push_back( Graph.at(i) );
+					(*it)->ChildrenCost().push_back( -log(cost) );
 				}
 			}
 		}
 		++k;
 	}
 
-	if (BFAlgorythm(Graph, N))
+	if( isNegativeCycleBFAlgorythm(Graph, numberCurrency) )
 		cout << "YES" << std::endl;
 	else
 		cout << "NO" << std::endl;
 
-	for (auto it = Graph.begin(); it != Graph.end(); ++it)
+	//Deleting
+	for( auto it = Graph.begin(); it != Graph.end(); ++it ) {
 		delete *it;
+	}
 
 	return 0;
 }

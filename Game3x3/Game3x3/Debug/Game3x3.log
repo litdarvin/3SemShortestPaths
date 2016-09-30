@@ -1,6 +1,1 @@
-﻿  Source.cpp
-c:\3семестр\homeassignmentsalgorythms\3semshortestpaths\game3x3\game3x3\source.cpp(130): warning C4305: 'argument': truncation from 'int' to 'char'
-c:\3семестр\homeassignmentsalgorythms\3semshortestpaths\game3x3\game3x3\source.cpp(130): warning C4309: 'argument': truncation of constant value
-c:\3семестр\homeassignmentsalgorythms\3semshortestpaths\game3x3\game3x3\source.cpp(120): warning C4101: 'current': unreferenced local variable
-  Game3x3.vcxproj -> C:\3семестр\HomeAssignmentsAlgorythms\3SemShortestPaths\Game3x3\Debug\Game3x3.exe
-  Game3x3.vcxproj -> C:\3семестр\HomeAssignmentsAlgorythms\3SemShortestPaths\Game3x3\Debug\Game3x3.pdb (Partial PDB)
+﻿LINK : fatal error LNK1168: cannot open C:\3семестр\HomeAssignmentsAlgorythms\3SemShortestPaths\Game3x3\Debug\Game3x3.exe for writing

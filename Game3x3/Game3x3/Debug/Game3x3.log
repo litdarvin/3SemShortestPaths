@@ -1,1 +1,3 @@
-﻿LINK : fatal error LNK1168: cannot open C:\3семестр\HomeAssignmentsAlgorythms\3SemShortestPaths\Game3x3\Debug\Game3x3.exe for writing
+﻿  Source.cpp
+  Game3x3.vcxproj -> C:\3семестр\HomeAssignmentsAlgorythms\3SemShortestPaths\Game3x3\Debug\Game3x3.exe
+  Game3x3.vcxproj -> C:\3семестр\HomeAssignmentsAlgorythms\3SemShortestPaths\Game3x3\Debug\Game3x3.pdb (Partial PDB)

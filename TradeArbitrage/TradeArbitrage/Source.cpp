@@ -3,62 +3,15 @@
 
 #include <iostream>
 #include <vector>
-#include <limits>
 #include <math.h>
 #include <assert.h>
+#include "CVertex.h"
 
 using std::vector;
 using std::cout;
 using std::cin;
 
-class CVertex {
-public:
-	CVertex() {	distance = std::numeric_limits<double>::infinity(); }
-	//properties
-	vector<CVertex*>& Children() { return children;	}
-	vector<double>& ChildrenCost() { return childrenCost; }
-	double& Distance() { return distance; }
 
-private:
-	vector<CVertex*> children;
-	vector<double> childrenCost;
-	double distance;
-};
-
-bool isNegativeCycleBFAlgorythm( vector<CVertex*>& graph, int numberCurrency )
-{	
-	assert(!graph.empty());
-	(*graph.begin())->Distance() = 0;
-
-	bool relaxed = false;
-	for( int k = 0; k < numberCurrency - 1; ++k ) {
-		relaxed = false;
-		for( auto it = graph.begin(); it != graph.end(); ++it ) {
-			vector<double>::iterator itChildrenCost = (*it)->ChildrenCost().begin();
-			for( auto itChildren = (*it)->Children().begin(); itChildren != (*it)->Children().end(); ++itChildren ) {
-				if( (*itChildren)->Distance() > (*it)->Distance() + *itChildrenCost ) {
-					(*itChildren)->Distance() = (*it)->Distance() + *itChildrenCost;
-					relaxed = true;
-				}
-				++itChildrenCost;
-			}
-		}
-
-		if (!relaxed)
-			break;
-	}
-
-	for( auto it = graph.begin(); it != graph.end(); ++it )	{
-		auto itChildrenCost = (*it)->ChildrenCost().begin();
-		for ( auto itChildren = (*it)->Children().begin(); itChildren != (*it)->Children().end(); ++itChildren ) {
-			if( (*itChildren)->Distance() > (*it)->Distance() + *itChildrenCost )
-				return true; //Negative cycle
-			++itChildrenCost;
-		}
-	}
-	//No negative cycle
-	return false;
-}
 
 int main()
 {
@@ -77,8 +30,8 @@ int main()
 				double cost = 0;
 				cin >> cost;
 				if( cost != -1 ) {
-					(*it)->Children().push_back( Graph.at(i) );
-					(*it)->ChildrenCost().push_back( -log(cost) );
+					(*it)->Children.push_back( Graph.at(i) );
+					(*it)->ChildrenCost.push_back( -log(cost) );
 				}
 			}
 		}

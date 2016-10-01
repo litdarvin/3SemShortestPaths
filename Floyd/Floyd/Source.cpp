@@ -6,7 +6,7 @@
 
 using std::fstream;
 
-void Floyd( int N, int** matrix )
+void Floyd( int N, int** matrix ) //Floyd algrythm
 {
 	for( int i = 0; i < N; ++i)
 	{
@@ -35,7 +35,7 @@ int main()
 	}
 
 	Floyd( N, matrix );
-	
+	//printing the result
 	for (int i = 0; i < N; ++i) 
 	{
 		for (int j = 0; j < N; ++j)	output << matrix[i][j]<<" ";

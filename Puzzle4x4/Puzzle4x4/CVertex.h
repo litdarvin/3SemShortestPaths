@@ -22,7 +22,7 @@ const short N = 16;
 class CVertex
 {
 public:
-	CVertex( char wayToMe_, array<short, N>& chain_, short zeroPosition_ );
+	CVertex( array<short, N>& chain_, short zeroPosition_ );
 
 	set<shared_ptr<CVertex>> Children;
 	weak_ptr<CVertex> Parent;
@@ -33,11 +33,15 @@ public:
 	int DistanceF;
 	int DistanceG;
 
-	void CreateChildren();//creates children for the vertex
+	bool wayToMeU;
+	bool wayToMeD;
+	bool wayToMeR;
+	bool wayToMeL;
+
+	void CreateChildren( set<shared_ptr<CVertex>>& graph );//creates children for the vertex
 
 	friend bool operator < ( CVertex& A, CVertex&B ) { return A.DistanceF > B.DistanceF; }
 
 private:
-	char wayToMe;
 	short zeroPosition;
 };

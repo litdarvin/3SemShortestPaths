@@ -18,58 +18,71 @@ using std::fstream;
 
 int Heuristic( shared_ptr<CVertex> current )
 {
-	return 0;
+	int ManhettenDistance = 0;
+
+	for (int i = 0; i < N; ++i)
+		ManhettenDistance += abs( (current->Chain[i] - 1) / 4 - (i - 1) / 4 ) + abs( (current->Chain[i] - 1) % 4 - (i - 1) % 4 );
+
+	return ManhettenDistance;
 }
 
-bool AStartAlgorythm( shared_ptr<CVertex> graph, fstream& output )
+int AStartAlgorythm( shared_ptr<CVertex> start )
 {
 	priority_queue<shared_ptr<CVertex>> Queue;
+	set<shared_ptr<CVertex>> Graph;
+	Graph.insert( start );
+	set<shared_ptr<CVertex>> VertexInQueue;
 	set<shared_ptr<CVertex>> SetOpenedVertex;
 	weak_ptr<CVertex> result;
-	Queue.push( graph );
-	graph->DistanceG = 0;
-	graph->DistanceF = graph->DistanceG + Heuristic( graph );
-	bool stop = false;
+	Queue.push( start );
+	VertexInQueue.insert( start );
+	start->DistanceG = 0;
+	start->DistanceF = start->DistanceG + Heuristic( start );
 
-	while (!stop)
+	shared_ptr<CVertex> current;
+
+	while( Queue.size() != 0 )
 	{
-		shared_ptr<CVertex> current = Queue.top();
+		current = Queue.top();
 		Queue.pop();
-		if (current->isItFinish()) return true;
+		VertexInQueue.erase( current );
+		if (current->isItFinish()) break;
 		SetOpenedVertex.insert( current );
-
+		current->CreateChildren( Graph );
 		for (auto it = current->Children.begin(); it != current->Children.end(); ++it)
 		{
-			SetOpenedVertex.find( *it );
+			auto containedInSet = SetOpenedVertex.find( *it );
+			//if (containedInSet != SetOpenedVertex.end() && current->DistanceG + 1 >= (*it)->DistanceG) continue;
+
+			if (containedInSet == SetOpenedVertex.end() || current->DistanceG + 1 < (*it)->DistanceG) {
+				(*it)->Parent = current;
+				(*it)->DistanceG = current->DistanceG + 1;
+				(*it)->DistanceF = (*it)->DistanceG + Heuristic( *it );
+				if (VertexInQueue.find( *it ) == VertexInQueue.end()) {
+					Queue.push( *it );
+					VertexInQueue.insert( *it );
+				}
+			}
 		}
 	}
-
+	return current->DistanceG;
 }
-/*(start, goal) :
-	U = \varnothing
-	Q = \varnothing
-	Q.push( start )
-	g[start] = 0
-	f[start] = g[start] + h( start )
-	while Q.size() != 0
-		current = вершина из Q с минимальным значением f
-		if current == goal
-			return true                                           // нашли путь до нужной вершины
-			Q.remove( current )
-			U.push( current )
-			for v : смежные с current вершины
-				tentativeScore = g[current] + d( current, v )           // d(current, v) — стоимость пути между current и v 
-				if v \in U and tentativeScore >= g[v]
-					continue
-					if v \notin U or tentativeScore < g[v]
-						parent[v] = current
-						g[v] = tentativeScore
-						f[v] = g[v] + h( v )
-						if v \notin Q
-							Q.push( v )
-							return false*/
 
 int main()
 {
+	fstream input( "puzzle.txt", fstream::in );
+	fstream output( "puzzle1.txt", fstream::out );
 
+
+	short zeroPosition = -1;
+	array<short, N> Chain;
+	//reading for checking and for graph
+	for (int i = 0; i < N; ++i)
+	{
+		input >> Chain[i];
+		if (Chain[i] == 0) zeroPosition = i;
+	}
+
+	auto start = shared_ptr<CVertex>(new CVertex( Chain, zeroPosition ));
+	output << AStartAlgorythm( start );
 }

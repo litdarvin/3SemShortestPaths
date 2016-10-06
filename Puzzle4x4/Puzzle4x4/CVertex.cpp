@@ -17,9 +17,8 @@ using std::fstream;
 
 #include "CVertex.h"
 
-CVertex::CVertex( char wayToMe_, array<short, N>& chain_, short zeroPosition_ )
+CVertex::CVertex( array<short, N>& chain_, short zeroPosition_ )
 {
-	wayToMe = wayToMe_;
 	Chain = chain_;
 	zeroPosition = zeroPosition_;
 }
@@ -38,31 +37,73 @@ bool CVertex::isItFinish() const
 	return false;
 }
 
-void CVertex::CreateChildren()
+void CVertex::CreateChildren( set<shared_ptr<CVertex>>& graph )
 {
 	array<short, N> newChain;
 
-	if (zeroPosition <= 11 && wayToMe != 'U') {
+	if (zeroPosition <= 11 && !wayToMeU) {
 		newChain = Chain;
 		std::swap( newChain[zeroPosition], newChain[zeroPosition + 4] );
-		std::find_if( Children.begin(), Children.end(),
-			[]( const shared_ptr<CVertex> V1, const shared_ptr<CVertex> V2 ) { return V1->Chain == V2->Chain; } );
-		Children.insert( shared_ptr<CVertex>( new CVertex( 'D', newChain, zeroPosition + 3 ) ) );
+		auto candidate = std::find_if( graph.begin(), graph.end(),
+			[newChain]( const shared_ptr<CVertex> V1 ) { return V1->Chain == newChain; } );
+		if (candidate == graph.end()) {
+			auto newMember = shared_ptr<CVertex>( new CVertex( newChain, zeroPosition + 3 ) );
+			newMember->wayToMeD = true;
+			Children.insert( newMember );
+			graph.insert( newMember );
+		}
+		else {
+			Children.insert( *candidate );
+			(*candidate)->wayToMeD = true;
+		}
 	}
-	if (zeroPosition >= 4 && wayToMe != 'D') {
+	if (zeroPosition >= 4 && !wayToMeD) {
 		newChain = Chain;
 		std::swap( newChain[zeroPosition], newChain[zeroPosition - 4] );
-		Children.push_back( shared_ptr<CVertex>( new CVertex( 'U', newChain, zeroPosition - 3 ) ) );
+		auto candidate = std::find_if( graph.begin(), graph.end(),
+			[newChain]( const shared_ptr<CVertex> V1 ) { return V1->Chain == newChain; } );
+		if (candidate == graph.end()) {
+			auto newMember = shared_ptr<CVertex>( shared_ptr<CVertex>( new CVertex( newChain, zeroPosition - 3 ) ) );
+			newMember->wayToMeU = true;
+			Children.insert( newMember );
+			graph.insert( newMember );
+		}
+		else {
+			Children.insert( *candidate );
+			(*candidate)->wayToMeU = true;
+		}
 	}
-	if (zeroPosition != 3 && zeroPosition != 7 && zeroPosition != 11 && zeroPosition != 15 && wayToMe != 'L') {
+	if (zeroPosition != 3 && zeroPosition != 7 && zeroPosition != 11 && zeroPosition != 15 && !wayToMeL) {
 		newChain = Chain;
 		std::swap( newChain[zeroPosition], newChain[zeroPosition + 1] );
-		Children.push_back( shared_ptr<CVertex>( new CVertex( 'R', newChain, zeroPosition + 1 ) ) );
+		auto candidate = std::find_if( graph.begin(), graph.end(),
+			[newChain]( const shared_ptr<CVertex> V1 ) { return V1->Chain == newChain; } );
+		if (candidate == graph.end()) {
+			auto newMember = shared_ptr<CVertex>( shared_ptr<CVertex>( new CVertex( newChain, zeroPosition + 1 ) ) );
+			newMember->wayToMeR = true;
+			Children.insert( newMember );
+			graph.insert( newMember );
+		}
+		else {
+			Children.insert( *candidate );
+			(*candidate)->wayToMeR = true;
+		}
 	}
-	if (zeroPosition != 0 && zeroPosition != 4 && zeroPosition != 8 && zeroPosition != 12 && wayToMe != 'R') {
+	if (zeroPosition != 0 && zeroPosition != 4 && zeroPosition != 8 && zeroPosition != 12 && !wayToMeR) {
 		newChain = Chain;
 		std::swap( newChain[zeroPosition], newChain[zeroPosition - 1] );
-		Children.push_back( shared_ptr<CVertex>( new CVertex( 'L', newChain, zeroPosition - 1 ) ) );
+		auto candidate = std::find_if( graph.begin(), graph.end(),
+			[newChain]( const shared_ptr<CVertex> V1 ) { return V1->Chain == newChain; } );
+		if (candidate == graph.end()) {
+			auto newMember = shared_ptr<CVertex>( shared_ptr<CVertex>( new CVertex( newChain, zeroPosition - 1 ) ) );
+			newMember->wayToMeL = true;
+			Children.insert( newMember );
+			graph.insert( newMember );
+		}
+		else {
+			Children.insert( *candidate );
+			(*candidate)->wayToMeL = true;
+		}
 	}
 }
 

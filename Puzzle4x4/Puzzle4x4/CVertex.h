@@ -25,7 +25,7 @@ public:
 	CVertex( array<short, N>& chain_, short zeroPosition_ );
 
 	vector<shared_ptr<CVertex>> Children;
-	weak_ptr<CVertex> Parent;
+	CVertex* Parent;
 	array<short, N> Chain;//condition
 
 	bool isItFinish() const;
@@ -38,7 +38,7 @@ public:
 	bool wayToMeR;
 	bool wayToMeL;
 
-	void CreateChildren( set<shared_ptr<CVertex>>& graph );//creates children for the vertex
+	void CreateChildren( set<CVertex*>& graph );//creates children for the vertex
 
 	friend bool operator < ( CVertex& A, CVertex&B ) { return A.DistanceF > B.DistanceF; }
 

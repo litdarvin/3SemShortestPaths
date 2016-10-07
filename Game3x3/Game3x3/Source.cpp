@@ -35,26 +35,29 @@ int main()
 	fstream output( "puzzle1.txt", fstream::out );
 
 	int chain = 0;
-	int sum = 0;
 	int zeroPosition = -1;
-	int current;
 	int numbers[9];
 	//reading for checking and for graph
-	for( int i = 0; i < 9; ++i )
-	{
+	for( int i = 0; i < 9; ++i ) {
+		int current = -1;
 		input >> current;
 		numbers[i] = current;
-		if (current == 0) zeroPosition = i;
+		if( current == 0 ) {
+			zeroPosition = i;
+		}
 		chain = 10 * chain + current;
 	}
 	//if it's correct
-	if( chain == 123456780 ) output << 0;
+	if( chain == 123456780 ) {
+		output << 0;
+	}
 	//if possible
-	if( CheckPossibility( numbers ) )	{
+	if( CheckPossibility( numbers ) ) {
 		shared_ptr<CVertex> graph( new CVertex( '\0', chain, zeroPosition ) );
 		bfs( graph, output );
+	} else {
+		output << -1;//if impossible
 	}
-	else output << -1;//if impossible
 
 	output.close();
 	input.close();

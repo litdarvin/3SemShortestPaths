@@ -49,11 +49,11 @@ void CVertex::CreateChildren( set<shared_ptr<CVertex>>& graph )
 		if (candidate == graph.end()) {
 			auto newMember = shared_ptr<CVertex>( new CVertex( newChain, zeroPosition + 3 ) );
 			newMember->wayToMeD = true;
-			Children.insert( newMember );
+			Children.push_back( newMember );
 			graph.insert( newMember );
 		}
 		else {
-			Children.insert( *candidate );
+			Children.push_back( *candidate );
 			(*candidate)->wayToMeD = true;
 		}
 	}
@@ -65,11 +65,11 @@ void CVertex::CreateChildren( set<shared_ptr<CVertex>>& graph )
 		if (candidate == graph.end()) {
 			auto newMember = shared_ptr<CVertex>( shared_ptr<CVertex>( new CVertex( newChain, zeroPosition - 3 ) ) );
 			newMember->wayToMeU = true;
-			Children.insert( newMember );
+			Children.push_back( newMember );
 			graph.insert( newMember );
 		}
 		else {
-			Children.insert( *candidate );
+			Children.push_back( *candidate );
 			(*candidate)->wayToMeU = true;
 		}
 	}
@@ -81,11 +81,11 @@ void CVertex::CreateChildren( set<shared_ptr<CVertex>>& graph )
 		if (candidate == graph.end()) {
 			auto newMember = shared_ptr<CVertex>( shared_ptr<CVertex>( new CVertex( newChain, zeroPosition + 1 ) ) );
 			newMember->wayToMeR = true;
-			Children.insert( newMember );
+			Children.push_back( newMember );
 			graph.insert( newMember );
 		}
 		else {
-			Children.insert( *candidate );
+			Children.push_back( *candidate );
 			(*candidate)->wayToMeR = true;
 		}
 	}
@@ -97,11 +97,11 @@ void CVertex::CreateChildren( set<shared_ptr<CVertex>>& graph )
 		if (candidate == graph.end()) {
 			auto newMember = shared_ptr<CVertex>( shared_ptr<CVertex>( new CVertex( newChain, zeroPosition - 1 ) ) );
 			newMember->wayToMeL = true;
-			Children.insert( newMember );
+			Children.push_back( newMember );
 			graph.insert( newMember );
 		}
 		else {
-			Children.insert( *candidate );
+			Children.push_back( *candidate );
 			(*candidate)->wayToMeL = true;
 		}
 	}

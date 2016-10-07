@@ -3,16 +3,15 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 using std::fstream;
 
 void Floyd( int N, int** matrix ) //Floyd algrythm
 {
-	for( int i = 0; i < N; ++i)
-	{
-		for( int j = 0; j < N; ++j )
-		{
-			for( int k = 0; k < N; ++k ) matrix[j][k] = std::min(matrix[j][k], matrix[j][i] + matrix[i][k]);
+	for( int i = 0; i < N; ++i ) {
+		for( int j = 0; j < N; ++j ) {
+			for( int k = 0; k < N; ++k ) matrix[j][k] = std::min( matrix[j][k], matrix[j][i] + matrix[i][k] );
 		}
 	}
 }
@@ -24,23 +23,30 @@ int main()
 
 	//reading
 	int N;
-	input>>N;
+	input >> N;
 
 	int** matrix = new int*[N];
 
-	for (int i = 0; i < N; ++i) 
-	{
+	for( int i = 0; i < N; ++i ) {
 		matrix[i] = new int[N];
-		for (int j = 0; j < N; ++j)	input >> matrix[i][j];
+		for( int j = 0; j < N; ++j ) {
+			input >> matrix[i][j];
+		}
 	}
 
 	Floyd( N, matrix );
 	//printing the result
-	for (int i = 0; i < N; ++i) 
-	{
-		for (int j = 0; j < N; ++j)	output << matrix[i][j]<<" ";
+	for( int i = 0; i < N; ++i ) {
+		for( int j = 0; j < N; ++j ) {
+			output << matrix[i][j] << " ";
+		}
 		output << std::endl;
 	}
+
+	for( int i = 0; i < N; ++i ) {
+		delete[] matrix[i];
+	}
+	delete[] matrix;
 
 	return 0;
 }

@@ -24,7 +24,7 @@ class CVertex
 public:
 	CVertex( array<short, N>& chain_, short zeroPosition_ );
 
-	set<shared_ptr<CVertex>> Children;
+	vector<shared_ptr<CVertex>> Children;
 	weak_ptr<CVertex> Parent;
 	array<short, N> Chain;//condition
 

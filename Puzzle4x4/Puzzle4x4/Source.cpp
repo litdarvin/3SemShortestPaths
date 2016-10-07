@@ -49,6 +49,7 @@ int AStartAlgorythm( shared_ptr<CVertex> start )
 		if (current->isItFinish()) break;
 		SetOpenedVertex.insert( current );
 		current->CreateChildren( Graph );
+
 		for (auto it = current->Children.begin(); it != current->Children.end(); ++it)
 		{
 			auto containedInSet = SetOpenedVertex.find( *it );

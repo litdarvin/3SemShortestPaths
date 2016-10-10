@@ -17,13 +17,13 @@ using std::shared_ptr;
 using std::weak_ptr;
 using std::fstream;
 
-const short N = 16;
-
+//const short N = 16;
+const int N = 16;
+const int n = 4;
 class CVertex
 {
 public:
 	CVertex( array<short, N>& chain_, short zeroPosition_ );
-
 	vector<shared_ptr<CVertex>> Children;
 	CVertex* Parent;
 	array<short, N> Chain;//condition
@@ -32,16 +32,18 @@ public:
 
 	int DistanceF;
 	int DistanceG;
+	char ShortestWayToMe;
+	char lastWayToMe;
+	short zeroPosition;
+	int H;
+	void CreateChildren( set<shared_ptr<CVertex>>& graph );//creates children for the vertex
+
+private:
 
 	bool wayToMeU;
 	bool wayToMeD;
 	bool wayToMeR;
 	bool wayToMeL;
 
-	void CreateChildren( set<CVertex*>& graph );//creates children for the vertex
-
-	friend bool operator < ( CVertex& A, CVertex&B ) { return A.DistanceF > B.DistanceF; }
-
-private:
-	short zeroPosition;
+	void pushInGraph( array<short, N>& newChain, short zeroPosition, set<shared_ptr<CVertex>>& graph, char lastWayToMe_ );
 };

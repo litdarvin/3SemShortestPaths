@@ -9,42 +9,21 @@
 #include <algorithm>
 #include <assert.h>
 #include <ctime>
+#include <map>
+#include <unordered_set>
 
 using std::vector;
 using std::priority_queue;
 using std::set;
 using std::shared_ptr;
 using std::weak_ptr;
+using std::map;
 using std::fstream;
+using std::unordered_set;
+using std::pair;
+
 #include "CVertex.h"
-
-class Compare {
-public:
-	bool operator() ( const CVertex* V1, const CVertex* V2 )
-	{
-		/*if( V1->DistanceF == V2->DistanceF ) {
-			return V1->zeroPosition > V2->zeroPosition;
-		}*/
-		return V1->DistanceF > V2->DistanceF;
-	}
-};
-
-template<typename T>
-
-class custom_priority_queue : public std::priority_queue<T, std::vector<T>, Compare> {
-public:
-
-	bool remove( const T& value ) {
-		auto it = std::find( this->c.begin(), this->c.end(), value );
-		if( it != this->c.end() ) {
-			this->c.erase( it );
-			std::make_heap( this->c.begin(), this->c.end(), this->comp );
-			return true;
-		} else {
-			return false;
-		}
-	}
-};
+#include "BinaryHeap.h"
 
 int Heuristic( const CVertex* current )
 {
@@ -55,7 +34,7 @@ int Heuristic( const CVertex* current )
 			ManhettenDistance += abs( ( current->Chain[i] - 1 ) / n - i / n ) + abs( ( current->Chain[i] - 1 ) % n - i % n );
 
 			//linear conflict
-			if( ( current->Chain[i] - 1 ) / n == i / n ) {
+		/*	if( ( current->Chain[i] - 1 ) / n == i / n ) {
 				for( int j = n * ( i / n ); j < i; ++j ) {
 					if( ( current->Chain[j] - 1 ) / n == j / n && current->Chain[j] > current->Chain[i] && current->Chain[j] != 0 )
 						ManhettenDistance += 1;
@@ -74,9 +53,10 @@ int Heuristic( const CVertex* current )
 					if( ( current->Chain[j] - 1 ) % n == j % n && current->Chain[j] < current->Chain[i] && current->Chain[j] != 0 )
 						ManhettenDistance += 1;
 				}
-			}
+			}*/
 		}
 	}
+	ManhettenDistance += abs( current->zeroPosition / n - 3 ) + abs( current->zeroPosition % n - 3 );
 	/*
 	//corner conflict
 	//left corners
@@ -113,18 +93,17 @@ int Heuristic( const CVertex* current )
 
 void AStartAlgorythm( shared_ptr<CVertex> start, fstream& output )
 {
+	CBinaryHeap Queue;
+	vector<shared_ptr<CVertex>> Graph;
+	map<CVertex*, int> VertexInQueue;
+	unordered_set<CVertex*> SetOpenedVertex;
 
-	custom_priority_queue < CVertex*> Queue;
-	set<shared_ptr<CVertex>> Graph;
-	set<CVertex*> VertexInQueue;
-	set<CVertex*> SetOpenedVertex;
 
-	
-	VertexInQueue.insert( start.get() );
+	VertexInQueue.insert( pair<CVertex*, int>( start.get(), 0 ) );
 	start->DistanceG = 0;
 	start->H = Heuristic( start.get() );
 	start->DistanceF = start->DistanceG + start->H;
-	Graph.insert( start );
+	Graph.push_back( start );
 	Queue.push( start.get() );
 	int last = start->DistanceF;
 	CVertex* current = 0;
@@ -132,10 +111,9 @@ void AStartAlgorythm( shared_ptr<CVertex> start, fstream& output )
 	while( Queue.size() != 0 ) {
 
 		current = Queue.top();
-		if (last> current->DistanceF)
-			system( "pause" );
+	//	if( last > current->DistanceF )
+		//	system( "pause" );
 		last = current->DistanceF;
-		Queue.pop();
 		VertexInQueue.erase( current );
 		if( current->isItFinish() ) {
 			break;
@@ -144,22 +122,20 @@ void AStartAlgorythm( shared_ptr<CVertex> start, fstream& output )
 		current->CreateChildren( Graph );
 
 		for( auto it = current->Children.begin(); it != current->Children.end(); ++it ) {
-			auto containedInSet = SetOpenedVertex.find( ( *it ).get() );
-
-			if( containedInSet == SetOpenedVertex.end() || current->DistanceG + 1 < ( *it )->DistanceG ) {
-				if( VertexInQueue.find( ( *it ).get() ) != VertexInQueue.end() ) {
-					Queue.remove( ( *it ).get() );
-				} else {
-					VertexInQueue.insert( ( *it ).get() );
-				}
+			if( SetOpenedVertex.find( ( *it ).get() ) == SetOpenedVertex.end() || current->DistanceG + 1 < ( *it )->DistanceG ) {
 				( *it )->ShortestWayToMe = ( *it )->lastWayToMe;
 				( *it )->Parent = current;
 				( *it )->DistanceG = current->DistanceG + 1;
+
 				if( ( *it )->H == -1 ) {
 					( *it )->H = Heuristic( ( *it ).get() );
 				}
-				( *it )->DistanceF = current->DistanceG + 1 + Heuristic( ( *it ).get() );
-				Queue.push( ( *it ).get() );
+				( *it )->DistanceF = ( *it )->DistanceG + Heuristic( ( *it ).get() );
+
+				if( VertexInQueue.find( ( *it ).get() ) == VertexInQueue.end() ) {
+					int index = Queue.push( ( *it ).get() );
+					VertexInQueue.insert( pair<CVertex*, int>( ( *it ).get(), index ) );
+				}
 			}
 		}
 	}
@@ -186,7 +162,7 @@ bool CheckPossibility( array<short, N>& chain, short zeroPosition)
 		}
 	}
 
-	return (sum) % 2 != 0;
+	return ( sum + ( zeroPosition - 1 ) / n ) % 2 != 0;
 }
 
 int main()
@@ -202,12 +178,12 @@ int main()
 		input >> Chain[i];
 		if( Chain[i] == 0 ) zeroPosition = i;
 	}
-	//if( CheckPossibility( Chain, zeroPosition ) ) {
+	if( CheckPossibility( Chain, zeroPosition ) ) {
 		auto start = shared_ptr<CVertex>( new CVertex( Chain, zeroPosition ) );
 		AStartAlgorythm( start, output );
-	//} else {
-	//	output << -1;
-	//}
+	} else {
+		output << -1;
+	}
 	output << std::endl << "min: " << ( clock() - start_time ) / 60000 << " sec: " << ( clock() - start_time ) / 1000.0;
 	output.close();
 	input.close();

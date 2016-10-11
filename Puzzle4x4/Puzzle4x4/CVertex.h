@@ -8,6 +8,7 @@
 #include <fstream>
 #include <algorithm>
 #include <array>
+#include <unordered_set>
 
 using std::vector;
 using std::array;
@@ -16,10 +17,11 @@ using std::set;
 using std::shared_ptr;
 using std::weak_ptr;
 using std::fstream;
+using std::unordered_set;
 
-//const short N = 16;
 const int N = 16;
 const int n = 4;
+
 class CVertex
 {
 public:
@@ -36,7 +38,7 @@ public:
 	char lastWayToMe;
 	short zeroPosition;
 	int H;
-	void CreateChildren( set<shared_ptr<CVertex>>& graph );//creates children for the vertex
+	void CreateChildren( vector<shared_ptr<CVertex>>& graph );//creates children for the vertex
 
 private:
 
@@ -45,5 +47,5 @@ private:
 	bool wayToMeR;
 	bool wayToMeL;
 
-	void pushInGraph( array<short, N>& newChain, short zeroPosition, set<shared_ptr<CVertex>>& graph, char lastWayToMe_ );
+	void pushInGraph( array<short, N>& newChain, short zeroPosition, vector<shared_ptr<CVertex>>& graph, char lastWayToMe_ );
 };

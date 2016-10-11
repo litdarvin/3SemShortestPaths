@@ -24,12 +24,18 @@
     <ClCompile Include="Heuristics.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="BinaryHeap.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CEquality.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryHeap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

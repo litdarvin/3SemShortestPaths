@@ -8,7 +8,9 @@
 #include <fstream>
 #include <algorithm>
 #include <utility>
+#include <unordered_set>
 
+using std::unordered_set;
 using std::vector;
 using std::queue;
 using std::set;
@@ -25,7 +27,7 @@ CVertex::CVertex( array<short, N>& chain_, short zeroPosition_ )
 	H = -1;
 }
 
-void CVertex::pushInGraph( array<short, N>& newChain, short zeroPosition_, set<shared_ptr<CVertex>>& graph, char lastWayToMe_ )
+void CVertex::pushInGraph( array<short, N>& newChain, short zeroPosition_, vector<shared_ptr<CVertex>>& graph, char lastWayToMe_)
 {
 	auto candidate = std::find_if( graph.begin(), graph.end(),
 		[newChain]( shared_ptr<CVertex> V1 ) { return V1->Chain == newChain; } );
@@ -58,7 +60,7 @@ void CVertex::pushInGraph( array<short, N>& newChain, short zeroPosition_, set<s
 		}
 		newMember->lastWayToMe = lastWayToMe_;
 		Children.push_back( newMember );
-		graph.insert( newMember );
+		graph.push_back( newMember );
 	} else {
 		( *candidate )->lastWayToMe = lastWayToMe_;
 		switch( lastWayToMe_ ) {
@@ -101,7 +103,7 @@ bool CVertex::isItFinish() const
 	return false;
 }
 
-void CVertex::CreateChildren( set<shared_ptr<CVertex>>& graph )
+void CVertex::CreateChildren( vector<shared_ptr<CVertex>>& graph )
 {
 	array<short, N> newChain;
 
